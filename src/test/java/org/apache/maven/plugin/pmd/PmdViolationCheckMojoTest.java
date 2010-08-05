@@ -94,6 +94,34 @@ public class PmdViolationCheckMojoTest
         }
 
     }
+    
+    public void testLessThanMaxFailuresSucceeds() 
+    	throws Exception 
+    {
+		File testPom = new File( getBasedir(),
+				"src/test/resources/unit/default-configuration/pmd-check-maxfailuresnotexceeded-plugin-config.xml");
+		PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo("check", testPom);
+		
+		pmdViolationMojo.execute();
+
+    }
+    
+    public void testFailsWhenMaxViolationsExceeded() 
+    	throws Exception 
+    {
+    	File testPom = new File( getBasedir(),
+		"src/test/resources/unit/default-configuration/pmd-check-failonmaxfailuresexceeded-plugin-config.xml");
+		PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo("check", testPom);
+		 try 
+		 {
+			 pmdViolationMojo.execute();
+			 fail( "Exception Expected" );
+		 } 
+		 catch( MojoFailureException e ) 
+		 {
+			 System.out.println( "Caught Expected Message: " + e.getMessage() );// expected
+		 }
+    }
 
     public void testException()
         throws Exception

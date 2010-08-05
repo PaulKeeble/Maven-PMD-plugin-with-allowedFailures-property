@@ -67,6 +67,14 @@ public abstract class AbstractPmdViolationCheckMojo
      * @required
      */
     private boolean failOnViolation;
+    
+    /**
+     * Maximum number of failing violations before failing the check
+     * 
+     * @parameter expression="${pmd.maxViolations}" default-value="0"
+     * @required
+     */
+    private int allowedFailures=Integer.MAX_VALUE;
 
     /**
      * The project language, for determining whether to run the report.
@@ -134,10 +142,11 @@ public abstract class AbstractPmdViolationCheckMojo
 
                     int failureCount = failures.size();
                     int warningCount = warnings.size();
-
+                    int violationsCount = failureCount + warningCount;
+                    
                     String message = getMessage( failureCount, warningCount, key, outputFile );
 
-                    if ( failureCount > 0 && failOnViolation )
+                    if ( ( violationsCount > allowedFailures ) || ( failureCount > 0 && failOnViolation ) )
                     {
                         throw new MojoFailureException( message );
                     }
